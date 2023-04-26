@@ -7,7 +7,7 @@ import grpc
 import rpc_weights_syn_pb2 as pb2
 import rpc_weights_syn_pb2_grpc as pb2_grpc
 
-global_random = np.random.rand(*[16*1024,1024]).astype("float32")
+global_random = np.random.rand(*[8*1024,1024]).astype("float32")
 def generate_state_dict(num):
     dict = {}
     for i in range(num):
