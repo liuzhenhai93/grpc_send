@@ -1,18 +1,8 @@
 syntax = "proto3";
 
 service WeightSync{
-  rpc HelloGrpc(HelloGrpcReq) returns (HelloGrpcReply){}
   // stream request
   rpc SynchronizeWeights(stream SynchronizeWeightsRequest) returns(SynchronizeWeightsResponse){}
-}
-
-message HelloGrpcReq{
-  string name = 1;
-  int32 age = 2;
-}
-
-message HelloGrpcReply{
-  string result = 1;
 }
 
 message NpArray {

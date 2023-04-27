@@ -5,15 +5,9 @@ import rpc_weights_syn_pb2_grpc as pb2_grpc
 import time
 from concurrent import futures
 import serialize_helper
+from collections import OrderedDict
 
 class WeightSync(pb2_grpc.WeightSyncServicer):
-    def HelloGrpc(self, request, context):
-        name = request.name
-        age = request.age
-
-        result = f'my name is {name}, i am {age} years old'
-        return pb2.HelloGrpcReply(result = result)
-
     def SynchronizeWeights(self, request_iterator, context):
         dict = OrderedDict()
         for request in request_iterator:
