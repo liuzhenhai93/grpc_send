@@ -20,7 +20,7 @@ class WeightSync(pb2_grpc.WeightSyncServicer):
             for (k, v) in request.weights.items():
                 v = serialize_helper.proto_to_numpy(v)
                 dict[k] = v
-                print(f"{k}:{v.size}")
+                #print(f"{k}:{v.size}")
         return pb2.SynchronizeWeightsResponse(result ='ok')
 
 
@@ -29,7 +29,7 @@ def run():
         ('grpc.max_send_message_length', -1),
         ('grpc.max_receive_message_length', -1),
     ]
-    grpc_server = grpc.server(futures.ThreadPoolExecutor(max_workers=4), options = options)
+    grpc_server = grpc.server(futures.ThreadPoolExecutor(max_workers=8), options = options)
     pb2_grpc.add_WeightSyncServicer_to_server(WeightSync(), grpc_server)
     grpc_server.add_insecure_port('0.0.0.0:5001')
     print('server will start at 0.0.0.0:5001')
