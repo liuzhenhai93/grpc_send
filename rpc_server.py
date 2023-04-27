@@ -15,30 +15,42 @@ class WeightSync(pb2_grpc.WeightSyncServicer):
         return pb2.HelloGrpcReply(result = result)
 
     def SynchronizeWeights(self, request_iterator, context):
-        dict = {}
+        dict = OrderedDict()
         for request in request_iterator:
-            for (k, v) in request.weights.items():
+            for (k, v) in zip(request.keys,request.weights):
                 v = serialize_helper.proto_to_numpy(v)
                 dict[k] = v
-                #print(f"{k}:{v.size}")
+                print(f"{k}:{v.size}")
         return pb2.SynchronizeWeightsResponse(result ='ok')
 
 
-def run():
+global_grpc_server = None
+def start_server(ip_port="0.0.0.0:5001"):
+    global global_grpc_server
+    assert global_grpc_server is None
     options=[
         ('grpc.max_send_message_length', -1),
         ('grpc.max_receive_message_length', -1),
     ]
-    grpc_server = grpc.server(futures.ThreadPoolExecutor(max_workers=8), options = options)
-    pb2_grpc.add_WeightSyncServicer_to_server(WeightSync(), grpc_server)
-    grpc_server.add_insecure_port('0.0.0.0:5001')
-    print('server will start at 0.0.0.0:5001')
-    grpc_server.start()
+    global_grpc_server = grpc.server(futures.ThreadPoolExecutor(max_workers=8), options = options)
+    pb2_grpc.add_WeightSyncServicer_to_server(WeightSync(), global_grpc_server)
+    global_grpc_server.add_insecure_port(ip_port)
+    print(f"server will start at {ip_port}")
+    global_grpc_server.start()
+
+def stop_server():
+    global global_grpc_server
+    global_grpc_server.stop(0)
+    global_grpc_server = None
+
+def run():
+    start_server('0.0.0.0:5001')
     try:
         while 1:
             time.sleep(3600)
     except KeyboardInterrupt:
-        grpc_server.stop(0)
+        stop_server()
+
 
 if __name__ == '__main__':
     run()

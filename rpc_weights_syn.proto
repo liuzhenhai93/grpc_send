@@ -20,8 +20,8 @@ message NpArray {
 }
 
 message SynchronizeWeightsRequest{
-  // param name to numpy array
-  map<string,NpArray> weights = 1;
+  repeated string keys = 1;
+  repeated NpArray weights = 2;
 }
 
 message SynchronizeWeightsResponse{
